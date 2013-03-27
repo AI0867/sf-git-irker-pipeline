@@ -1,0 +1,59 @@
+#!/usr/bin/python
+
+import locale, os, subprocess, sys
+
+def do(command):
+    proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+    status = proc.wait()
+    output = proc.stdout.read().rstrip()
+    if status != 0:
+        return ""
+    else:
+        return unicode(output, locale.getlocale()[1] or 'UTF-8').encode(locale.getlocale()[1] or 'UTF-8')
+
+def add_color(obj):
+    obj.bold = '\x02'
+    obj.green = '\x0303'
+    obj.blue = '\x0302'
+    obj.red = '\x0305'
+    obj.yellow = '\x0307'
+    obj.brown = '\x0305'
+    obj.magenta = '\x0306'
+    obj.cyan = '\x0310'
+    obj.reset = '\x0F'
+
+class extract_commit(object):
+    def __init__(self, repo, branch, commit):
+        self.repo = repo
+        self.branch = branch
+
+        self.rev = do("git describe --always %s" % commit)
+        self.files = " ".join(do("git diff-tree -r --name-only %s" % commit).split('\n')[1:])
+        metadata = do("git log -1 '--pretty=format:%%an|<%%ae>|%%s' %s" % commit).split('|')
+        self.author = metadata[0]
+        self.logmsg = metadata[-1]
+    def format(self):
+        return "%(green)s%(author)s%(reset)s %(bold)s%(repo)s%(reset)s:%(yellow)s%(branch)s%(reset)s * %(bold)s%(rev)s%(reset)s / %(bold)s%(files)s%(reset)s: %(logmsg)s" % self.__dict__
+
+if __name__ == "__main__":
+    refname = os.path.basename(sys.argv[1])
+    oldrev = do("git rev-parse %s" % sys.argv[2])
+    newrev = do("git rev-parse %s" % sys.argv[3])
+
+    commits = do("git rev-list --reverse %s..%s" % (oldrev, newrev)).split()
+
+    shipto = '["irc://chat.freenode.net/##projectchannel","irc://chat.freenode.net/#commits"]'
+    emailto = "irker@some-host"
+
+    #print "Refname: %s" % refname
+    #print "Oldrev: %s" % oldrev
+    #print "Newrev: %s" % newrev
+    #print "List: %s" % commits
+
+    for commit in commits:
+        obj = extract_commit("PROJECTNAME", refname, commit)
+        add_color(obj)
+        #print obj.format()
+        subprocess.Popen(["mail", "-s", "irker: %s" % shipto, emailto], stdin=subprocess.PIPE).communicate(obj.format())
+
+    #sys.exit(1)
