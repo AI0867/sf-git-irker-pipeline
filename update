@@ -29,7 +29,7 @@ class extract_commit(object):
 
         self.rev = do("git describe --always %s" % commit)
         self.files = " ".join(do("git diff-tree -r --name-only %s" % commit).split('\n')[1:])
-        metadata = do("git log -1 '--pretty=format:%%an|<%%ae>|%%s' %s" % commit).split('|')
+        metadata = do("git log -1 '--pretty=format:%%an|%%s' %s" % commit).split('|')
         self.author = metadata[0]
         self.logmsg = metadata[-1]
     def format(self):
