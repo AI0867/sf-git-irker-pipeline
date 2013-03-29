@@ -10,7 +10,6 @@ incoming = email.message_from_file(sys.stdin)
 subj = incoming.get("Subject")
 if not subj.startswith("irker: "):
 	sys.exit(1)
-# We can filter From: on @users.sourceforge.net
 stripped = subj.lstrip("irker: ")
 targets = json.loads(stripped)
 if incoming.is_multipart():
