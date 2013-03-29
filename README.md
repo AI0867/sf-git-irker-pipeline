@@ -1,7 +1,7 @@
 Sourceforge git-irker pipeline
 ==============================
 
-A set of tools that get commit notifications from a sourceforge-hosted git repository to an external irker instance.
+A set of tools that get commit notifications from a sourceforge-hosted git repository to an external [irker](http://www.catb.org/~esr/irker/) instance.
 The regular irkerhook.py cannot be used in its current form because sourceforge doesn't give hooks network access and provides python 2.4 instead of something modern.
 
 All configuration is hardcoded.
