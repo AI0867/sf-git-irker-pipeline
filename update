@@ -6,10 +6,11 @@ def do(command):
     proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     status = proc.wait()
     output = proc.stdout.read().rstrip()
+    loc = locale.getlocale()[1] or 'UTF-8'
     if status != 0:
         return ""
     else:
-        return unicode(output, locale.getlocale()[1] or 'UTF-8').encode(locale.getlocale()[1] or 'UTF-8')
+        return unicode(output, loc).encode(loc)
 
 def add_color(obj):
     obj.bold = '\x02'
