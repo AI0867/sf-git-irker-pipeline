@@ -14,3 +14,8 @@ IRKERMAILFILTER=$HOME/irker-mailfilter/irker-mailfilter.py
 * ^From: .*@users.sourceforge.net
 | $IRKERMAILFILTER
 
+:0
+* ^Subject: irker json
+* ^From: .*@users.sourceforge.net
+| $IRKERMAILFILTER
+
